@@ -2,6 +2,7 @@ package com.abbaraees.weatherly.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.abbaraees.weatherly.R
 import com.abbaraees.weatherly.data.LocationResponse
 import com.abbaraees.weatherly.data.WeatherDataNetwork
 import com.abbaraees.weatherly.states.HomeState
@@ -53,13 +54,20 @@ class HomeViewModel(
                     _state.update {
                         it.copy(
                             cityName = data.name,
-                            weatherDescription = data.weather[0].main,
+                            weatherDescription = data.weather[0].description,
                             dateTime = Instant
                                 .ofEpochSecond(data.dt)
                                 .atZone(ZoneId.systemDefault())
                                 .toLocalDateTime().toString(),
                             temp = data.main.temp,
-                            isFetchingWeatherData = false
+                            isFetchingWeatherData = false,
+                            weatherIcon = when (data.weather[0].main) {
+                                "Clouds" -> R.drawable.cloudy
+                                "Rain" -> R.drawable.rainy
+                                "Snow" -> R.drawable.snow
+                                "Thunderstorm" -> R.drawable.thunderstorm
+                                else -> R.drawable.sun
+                            }
                         )
                     }
                 }

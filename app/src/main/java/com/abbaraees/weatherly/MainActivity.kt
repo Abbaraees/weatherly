@@ -41,7 +41,6 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Weatherly(
-                        httpClient = httpClient,
                         factory = factory
                     )
                 }
@@ -52,7 +51,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Weatherly(httpClient: HttpClient, factory: ViewModelFactory) {
+fun Weatherly(factory: ViewModelFactory) {
     val navController = rememberNavController()
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -65,7 +64,6 @@ fun Weatherly(httpClient: HttpClient, factory: ViewModelFactory) {
     ) {
         WeatherlyNavHost(
             navController = navController,
-            httpClient = httpClient,
             factory = factory,
             modifier = Modifier.padding(it))
     }

@@ -17,7 +17,6 @@ import io.ktor.client.HttpClient
 fun WeatherlyNavHost(
     navController: NavHostController,
     modifier: Modifier,
-    httpClient: HttpClient,
     factory: ViewModelFactory
 ) {
     NavHost(
@@ -34,5 +33,6 @@ fun WeatherlyNavHost(
         composable(WeatherlyScreen.route_favorites) {
             Favorites()
         }
+
     }
 }
