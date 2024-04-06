@@ -1,5 +1,5 @@
 ## Weatherly - Jetpack Compose Weather App (README)
-![Weatherly App Animation](assets/weatherly-animation.gif)
+![Weatherly App Animation](./assets/weatherly-animation.gif)
 
 Weatherly is an Android application built with Jetpack Compose and MVVM architecture that allows users to explore weather conditions for any location.
 
