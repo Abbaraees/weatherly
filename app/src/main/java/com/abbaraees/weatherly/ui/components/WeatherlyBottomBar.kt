@@ -1,9 +1,8 @@
-package com.abbaraees.weatherly.components
+package com.abbaraees.weatherly.ui.components
 
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -12,9 +11,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.abbaraees.weatherly.screens.WeatherlyScreen
+import com.abbaraees.weatherly.ui.screens.WeatherlyScreen
 import com.abbaraees.weatherly.ui.theme.WeatherlySkyBlue
-import com.abbaraees.weatherly.ui.theme.WeatherlySunshineYellow
 
 @Composable
 fun WeatherlyBottomBar(

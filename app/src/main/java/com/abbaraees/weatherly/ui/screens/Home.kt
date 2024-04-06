@@ -1,4 +1,4 @@
-package com.abbaraees.weatherly.screens
+package com.abbaraees.weatherly.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -24,13 +24,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.abbaraees.weatherly.R
-import com.abbaraees.weatherly.components.FetchingWeatherData
-import com.abbaraees.weatherly.components.SearchInputField
-import com.abbaraees.weatherly.components.WeatherInfo
+import com.abbaraees.weatherly.ui.components.FetchingWeatherData
+import com.abbaraees.weatherly.ui.components.SearchInputField
+import com.abbaraees.weatherly.ui.components.WeatherInfo
 import com.abbaraees.weatherly.ui.theme.WeatherlySkyBlue
 import com.abbaraees.weatherly.viewmodels.HomeViewModel
 import kotlinx.coroutines.launch
@@ -86,8 +87,11 @@ fun Home(
                                     .clickable {
                                         searchScope.launch {
                                             viewModel.fetchWeatherData(
-                                                location.latitude,
-                                                location.longitude
+                                                lat = location.latitude,
+                                                lon = location.longitude,
+                                                name = location.name,
+                                                state = location.admin1,
+                                                country = location.country
                                             )
                                         }
                                     }
@@ -116,13 +120,13 @@ fun Home(
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.no_internet),
-                    contentDescription = "No internet connection",
+                    contentDescription = stringResource(R.string.no_internet_connection),
                     modifier = Modifier
                         .size(80.dp)
                         .padding(bottom = 8.dp)
                 )
                 Text(
-                    text = "No Internet Connection",
+                    text = stringResource(R.string.no_internet_connection),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = WeatherlySkyBlue
@@ -136,7 +140,7 @@ fun Home(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     Text(
-                        text = "Please Enter a city name",
+                        text = stringResource(R.string.enter_city_name),
                         style = MaterialTheme.typography.headlineMedium,
                         color = WeatherlySkyBlue
                     )

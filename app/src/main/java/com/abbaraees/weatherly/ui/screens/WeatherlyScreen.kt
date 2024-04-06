@@ -1,4 +1,4 @@
-package com.abbaraees.weatherly.screens
+package com.abbaraees.weatherly.ui.screens
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
@@ -28,19 +28,19 @@ sealed class WeatherlyScreen(
     }
     
     
-    object Home: WeatherlyScreen (
+    object Home: WeatherlyScreen(
         route_home,
         R.string.home,
         Icons.Default.Home
     )
 
-    object Recents: WeatherlyScreen (
+    object Recents: WeatherlyScreen(
         route_recents,
         R.string.recents,
         Icons.Default.Menu
     )
 
-    object Favorites: WeatherlyScreen (
+    object Favorites: WeatherlyScreen(
         route_favorites,
         R.string.favorites,
         Icons.Default.Favorite

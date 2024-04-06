@@ -12,9 +12,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.abbaraees.weatherly.components.WeatherlyBottomBar
-import com.abbaraees.weatherly.components.WeatherlyNavHost
-import com.abbaraees.weatherly.components.WeatherlyTopBar
+import androidx.room.Room
+import com.abbaraees.weatherly.data.WeatherlyDatabase
+import com.abbaraees.weatherly.data.repository.WeatherDataRepository
+import com.abbaraees.weatherly.ui.components.WeatherlyBottomBar
+import com.abbaraees.weatherly.ui.navigation.WeatherlyNavHost
+import com.abbaraees.weatherly.ui.components.WeatherlyTopBar
 import com.abbaraees.weatherly.ui.theme.WeatherlyTheme
 import com.abbaraees.weatherly.viewmodels.ViewModelFactory
 import io.ktor.client.HttpClient
@@ -24,14 +27,26 @@ import io.ktor.serialization.gson.gson
 
 
 class MainActivity : ComponentActivity() {
+    private lateinit var db: WeatherlyDatabase
+    private lateinit var repository: WeatherDataRepository
+    private lateinit var factory: ViewModelFactory
+
     private val httpClient = HttpClient(Android) {
         install(ContentNegotiation) {
             gson()
         }
     }
-    private val factory = ViewModelFactory(httpClient)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        db = Room.databaseBuilder(
+                applicationContext,
+                WeatherlyDatabase::class.java,
+                "weatherlyDatabase.db"
+            ).build()
+        repository = WeatherDataRepository(db.weatherDataDao())
+        factory = ViewModelFactory(httpClient, repository)
+
         super.onCreate(savedInstanceState)
         setContent {
             WeatherlyTheme {

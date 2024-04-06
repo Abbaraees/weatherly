@@ -1,4 +1,4 @@
-package com.abbaraees.weatherly.components
+package com.abbaraees.weatherly.ui.components
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
@@ -6,11 +6,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
@@ -37,9 +35,11 @@ fun WeatherInfoCard(
     cityName: String,
     temperature: String,
     weatherCondition: String,
-    @DrawableRes weatherIcon: Int,
+    weatherMain: String,
     modifier: Modifier = Modifier,
-    isFavorite: Boolean = false
+    isFavorite: Boolean = false,
+    onMarkAsFavorite: () -> Unit,
+    onDelete: () -> Unit
 ) {
     Card(
         border = BorderStroke(1.dp, WeatherlySkyBlue),
@@ -50,7 +50,15 @@ fun WeatherInfoCard(
     ) {
         Row {
             Image(
-                painter = painterResource(id = weatherIcon),
+                painter = painterResource(
+                    id = when (weatherMain) {
+                        "Clouds" -> R.drawable.cloudy
+                        "Rain" -> R.drawable.rainy
+                        "Snow" -> R.drawable.snow
+                        "Thunderstorm" -> R.drawable.thunderstorm
+                        else -> R.drawable.sun
+                    }
+                ),
                 contentDescription = "",
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
@@ -69,14 +77,14 @@ fun WeatherInfoCard(
                     ,
                     horizontalArrangement = Arrangement.End,
                 ) {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = onDelete) {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Delete weather data",
                             tint = WeatherlySunshineYellow
                         )
                     }
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = onMarkAsFavorite) {
                         Icon(
                             imageVector = Icons.Default.Favorite,
                             contentDescription = "Mark as favorite",
@@ -105,11 +113,12 @@ fun WeatherInfoCard(
 @Preview(showBackground = true)
 @Composable
 fun PreviewWeatherInfoCard() {
-    WeatherInfoCard(
-        cityName = "Washington",
-        temperature = "32 C",
-        weatherCondition = "Sunny",
-        weatherIcon = R.drawable.sun,
-        isFavorite = true
-    )
+//    WeatherInfoCard(
+//        cityName = "Washington",
+//        temperature = "32 C",
+//        weatherCondition = "Sunny",
+//        weatherIcon = R.drawable.sun,
+//        isFavorite = true,
+//        onMarkAsFavorite = { viewModel.markAsFavorite(it.id) }
+//    ) { viewModel.deleteWeatherData(it.id) }
 }

@@ -1,4 +1,4 @@
-package com.abbaraees.weatherly.components
+package com.abbaraees.weatherly.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

@@ -1,4 +1,4 @@
-package com.abbaraees.weatherly.components
+package com.abbaraees.weatherly.ui.components
 
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api

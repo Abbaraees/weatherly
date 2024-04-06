@@ -1,4 +1,4 @@
-package com.abbaraees.weatherly.states
+package com.abbaraees.weatherly.ui.states
 
 import androidx.annotation.DrawableRes
 import com.abbaraees.weatherly.data.Location

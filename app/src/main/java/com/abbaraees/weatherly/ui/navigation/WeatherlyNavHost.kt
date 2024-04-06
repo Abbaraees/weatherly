@@ -1,4 +1,4 @@
-package com.abbaraees.weatherly.components
+package com.abbaraees.weatherly.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -6,12 +6,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.abbaraees.weatherly.screens.Favorites
-import com.abbaraees.weatherly.screens.Home
-import com.abbaraees.weatherly.screens.Recents
-import com.abbaraees.weatherly.screens.WeatherlyScreen
+import com.abbaraees.weatherly.ui.screens.Favorites
+import com.abbaraees.weatherly.ui.screens.Home
+import com.abbaraees.weatherly.ui.screens.Recents
+import com.abbaraees.weatherly.ui.screens.WeatherlyScreen
 import com.abbaraees.weatherly.viewmodels.ViewModelFactory
-import io.ktor.client.HttpClient
 
 @Composable
 fun WeatherlyNavHost(
@@ -28,10 +27,10 @@ fun WeatherlyNavHost(
             Home(viewModel = viewModel(factory = factory))
         }
         composable(WeatherlyScreen.route_recents) {
-            Recents()
+            Recents(viewModel = viewModel(factory = factory))
         }
         composable(WeatherlyScreen.route_favorites) {
-            Favorites()
+            Favorites(viewModel = viewModel(factory = factory))
         }
 
     }
