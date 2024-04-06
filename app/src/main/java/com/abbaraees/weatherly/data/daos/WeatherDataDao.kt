@@ -25,5 +25,5 @@ interface WeatherDataDao {
     fun getFavorites(): Flow<List<WeatherData>>
 
     @Query("SELECT * FROM weatherdata WHERE latitude = :latitude AND longitude = :longitude")
-    suspend fun getWeatherDataByLatitudeAndLongitude(latitude: Double, longitude: Double): WeatherData
+    suspend fun getWeatherDataByLatitudeAndLongitude(latitude: Double, longitude: Double): WeatherData?
 }

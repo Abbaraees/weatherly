@@ -97,7 +97,19 @@ class HomeViewModel(
                     )
 
                     viewModelScope.launch {
-                        repository.addWeatherData(weatherData)
+                        val previousData = repository.getWeatherDataByLatitudeAndLongitude(lat, lon)
+                        if (previousData != null) {
+                            val newWeatherData = previousData.copy(
+                                weatherDescription = weatherData.weatherDescription,
+                                weatherMain = weatherData.weatherMain,
+                                temperature = weatherData.temperature,
+                                date = formattedDate
+                            )
+                            repository.updateWeatherData(newWeatherData)
+                        } else {
+                            repository.addWeatherData(weatherData)
+                        }
+
                     }
 
                 }

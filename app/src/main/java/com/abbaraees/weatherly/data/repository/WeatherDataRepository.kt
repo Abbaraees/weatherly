@@ -20,11 +20,11 @@ class WeatherDataRepository(
         return weatherDataDao.getWeatherById(id)
     }
 
-    suspend fun getAllWeatherData(): Flow<List<WeatherData>> {
+    fun getAllWeatherData(): Flow<List<WeatherData>> {
         return weatherDataDao.getAllWeatherData()
     }
 
-    suspend fun getFavorites(): Flow<List<WeatherData>> {
+    fun getFavorites(): Flow<List<WeatherData>> {
         return weatherDataDao.getFavorites()
     }
 
@@ -37,5 +37,13 @@ class WeatherDataRepository(
     suspend fun deleteWeatherData(weatherDataId: Int) {
         val weatherData = weatherDataDao.getWeatherById(weatherDataId)
         weatherDataDao.deleteWeatherData(weatherData)
+    }
+
+    suspend fun getWeatherDataByLatitudeAndLongitude(latitude: Double, longitude: Double): WeatherData? {
+        return weatherDataDao.getWeatherDataByLatitudeAndLongitude(latitude, longitude)
+    }
+
+    suspend fun updateWeatherData(weatherData: WeatherData) {
+        weatherDataDao.addWeatherData(weatherData)
     }
 }
