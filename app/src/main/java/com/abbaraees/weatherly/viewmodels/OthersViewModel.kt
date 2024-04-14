@@ -2,12 +2,8 @@ package com.abbaraees.weatherly.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.abbaraees.weatherly.data.WeatherDataNetwork
 import com.abbaraees.weatherly.data.repository.WeatherDataRepository
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.get
-import io.ktor.client.statement.HttpResponse
+import com.abbaraees.weatherly.data.services.WeatherDataService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,8 +16,7 @@ import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class OthersViewModel(
-    private val repository: WeatherDataRepository,
-    private val httpClient: HttpClient,
+    private val repository: WeatherDataRepository
 ): ViewModel() {
     private var favoritesOnly = MutableStateFlow(false)
 
@@ -51,28 +46,19 @@ class OthersViewModel(
     fun updateWeatherData(weatherDataId: Int) {
         viewModelScope.launch {
             val previousData = repository.getWeatherDataById(weatherDataId)
-            val weatherDataUrl =
-                "https://api.openweathermap.org/data/2.5/weather?lat=${previousData.latitude}&lon=${previousData.longitude}&units=metric&appid=978074a82dda3d6d1733d990dae69123"
-            var response: HttpResponse? = null
-            try {
-                response = httpClient.get(weatherDataUrl)
-            }
-            catch (_: Exception) {
+            val response = WeatherDataService.fetchWeatherData(previousData.latitude, previousData.longitude)
 
-            }
-
-            if (response?.status?.value == 200) {
-                val data: WeatherDataNetwork = response.body()
+            if (response != null) {
                 val formattedDate = Instant
-                    .ofEpochSecond(data.dt)
+                    .ofEpochSecond(response.dt)
                     .atZone(ZoneId.systemDefault())
                     .toLocalDateTime().format(
                         DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a"))
 
                 val newWeatherData = previousData.copy(
-                    weatherDescription = data.weather[0].description,
-                    weatherMain = data.weather[0].main,
-                    temperature = data.main.temp,
+                    weatherDescription = response.weather[0].description,
+                    weatherMain = response.weather[0].main,
+                    temperature = response.main.temp,
                     date = formattedDate
                 )
                 repository.updateWeatherData(newWeatherData)

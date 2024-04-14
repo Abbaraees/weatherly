@@ -16,27 +16,16 @@ import androidx.room.Room
 import com.abbaraees.weatherly.data.WeatherlyDatabase
 import com.abbaraees.weatherly.data.repository.WeatherDataRepository
 import com.abbaraees.weatherly.ui.components.WeatherlyBottomBar
-import com.abbaraees.weatherly.ui.navigation.WeatherlyNavHost
 import com.abbaraees.weatherly.ui.components.WeatherlyTopBar
+import com.abbaraees.weatherly.ui.navigation.WeatherlyNavHost
 import com.abbaraees.weatherly.ui.theme.WeatherlyTheme
 import com.abbaraees.weatherly.viewmodels.ViewModelFactory
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.android.Android
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.serialization.gson.gson
 
 
 class MainActivity : ComponentActivity() {
     private lateinit var db: WeatherlyDatabase
     private lateinit var repository: WeatherDataRepository
     private lateinit var factory: ViewModelFactory
-
-    private val httpClient = HttpClient(Android) {
-        install(ContentNegotiation) {
-            gson()
-        }
-    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         db = Room.databaseBuilder(
@@ -45,7 +34,7 @@ class MainActivity : ComponentActivity() {
                 "weatherlyDatabase.db"
             ).build()
         repository = WeatherDataRepository(db.weatherDataDao())
-        factory = ViewModelFactory(httpClient, repository)
+        factory = ViewModelFactory(repository)
 
         super.onCreate(savedInstanceState)
         setContent {

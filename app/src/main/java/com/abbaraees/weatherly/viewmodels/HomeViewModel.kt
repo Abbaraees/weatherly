@@ -4,11 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.abbaraees.weatherly.R
 import com.abbaraees.weatherly.data.LocationResponse
-import com.abbaraees.weatherly.data.WeatherDataNetwork
 import com.abbaraees.weatherly.data.entities.WeatherData
 import com.abbaraees.weatherly.data.repository.WeatherDataRepository
+import com.abbaraees.weatherly.data.services.LocationService
+import com.abbaraees.weatherly.data.services.WeatherDataService
 import com.abbaraees.weatherly.ui.states.HomeState
-import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
@@ -21,7 +21,6 @@ import java.time.format.DateTimeFormatter
 
 
 class HomeViewModel(
-    private val httpClient: HttpClient,
     private val repository: WeatherDataRepository,
 ): ViewModel() {
 
@@ -45,73 +44,63 @@ class HomeViewModel(
             searchTerm = "",
             noInternet = false
         ) }
-        val weatherDataUrl = "https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&units=metric&appid=978074a82dda3d6d1733d990dae69123"
+
         viewModelScope.launch {
-            var response: HttpResponse? = null
-            try {
-                response = httpClient.get(weatherDataUrl)
+            val response = WeatherDataService.fetchWeatherData(lat, lon)
+            if (response != null) {
+                val formattedDate = Instant
+                    .ofEpochSecond(response.dt)
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDateTime()
+                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a"))
+                _state.update {
+                    it.copy(
+                        cityName = response.name,
+                        weatherDescription = response.weather[0].description,
+                        dateTime = formattedDate,
+                        temp = response.main.temp,
+                        isFetchingWeatherData = false,
+                        weatherIcon = when (response.weather[0].main) {
+                            "Clouds" -> R.drawable.cloudy
+                            "Rain" -> R.drawable.rainy
+                            "Snow" -> R.drawable.snow
+                            "Thunderstorm" -> R.drawable.thunderstorm
+                            else -> R.drawable.sun
+                        }
+                    )
+                }
+
+                val weatherData = WeatherData(
+                    latitude = lat,
+                    longitude = lon,
+                    locationName = name,
+                    state = state,
+                    country = country,
+                    weatherMain = response.weather[0].main,
+                    weatherDescription = response.weather[0].description,
+                    temperature = response.main.temp,
+                    date = formattedDate
+                )
+
+                val previousData = repository.getWeatherDataByLatitudeAndLongitude(lat, lon)
+                if (previousData != null) {
+                    val newWeatherData = previousData.copy(
+                        weatherDescription = weatherData.weatherDescription,
+                        weatherMain = weatherData.weatherMain,
+                        temperature = weatherData.temperature,
+                        date = formattedDate
+                    )
+                    repository.updateWeatherData(newWeatherData)
+                } else {
+                    repository.addWeatherData(weatherData)
+                }
             }
-            catch (error: Exception) {
+            else {
                 _state.update {
                     it.copy(
                         noInternet = true,
                         isFetchingWeatherData = false
                     )
-                }
-            }
-            if (response != null) {
-                if (response.status.value == 200) {
-                    val data: WeatherDataNetwork = response.body()
-                    val formattedDate = Instant
-                        .ofEpochSecond(data.dt)
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDateTime().format(
-                        DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a"))
-                    _state.update {
-                        it.copy(
-                            cityName = data.name,
-                            weatherDescription = data.weather[0].description,
-                            dateTime = formattedDate,
-                            temp = data.main.temp,
-                            isFetchingWeatherData = false,
-                            weatherIcon = when (data.weather[0].main) {
-                                "Clouds" -> R.drawable.cloudy
-                                "Rain" -> R.drawable.rainy
-                                "Snow" -> R.drawable.snow
-                                "Thunderstorm" -> R.drawable.thunderstorm
-                                else -> R.drawable.sun
-                            }
-                        )
-                    }
-
-                    val weatherData = WeatherData(
-                        latitude = lat,
-                        longitude = lon,
-                        locationName = name,
-                        state = state,
-                        country = country,
-                        weatherMain = data.weather[0].main,
-                        weatherDescription = data.weather[0].description,
-                        temperature = data.main.temp,
-                        date = formattedDate
-                    )
-
-                    viewModelScope.launch {
-                        val previousData = repository.getWeatherDataByLatitudeAndLongitude(lat, lon)
-                        if (previousData != null) {
-                            val newWeatherData = previousData.copy(
-                                weatherDescription = weatherData.weatherDescription,
-                                weatherMain = weatherData.weatherMain,
-                                temperature = weatherData.temperature,
-                                date = formattedDate
-                            )
-                            repository.updateWeatherData(newWeatherData)
-                        } else {
-                            repository.addWeatherData(weatherData)
-                        }
-
-                    }
-
                 }
             }
         }
@@ -124,29 +113,23 @@ class HomeViewModel(
                 noInternet = false
             )
         }
-        val locationUrl = "https://geocoding-api.open-meteo.com/v1/search?name=${_state.value.searchTerm}"
         viewModelScope.launch {
-            var response: HttpResponse? = null
-            try {
-                response = httpClient.get(locationUrl)
+            val response: LocationResponse? = LocationService.getLocations(_state.value.searchTerm)
+
+            if (response != null) {
+                _state.update {
+                    it.copy(
+                        locations = response.results,
+                        isLoadingLocations = false
+                    )
+                }
             }
-            catch (error: Exception) {
+            else {
                 _state.update {
                     it.copy(
                         noInternet = true,
                         isLoadingLocations = false
                     ) }
-            }
-            if (response != null) {
-                if (response.status.value == 200) {
-                    val data: LocationResponse = response.body()
-                    _state.update {
-                        it.copy(
-                            locations = data.results,
-                            isLoadingLocations = false
-                        )
-                    }
-                }
             }
         }
     }
