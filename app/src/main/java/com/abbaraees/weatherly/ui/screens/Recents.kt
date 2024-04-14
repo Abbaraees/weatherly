@@ -58,8 +58,10 @@ fun Recents(
                         weatherCondition = it.weatherDescription,
                         weatherMain = it.weatherMain,
                         isFavorite = it.isFavorite,
-                        onMarkAsFavorite = { viewModel.markAsFavorite(it.id) }
-                    ) { viewModel.deleteWeatherData(it.id) }
+                        onMarkAsFavorite = { viewModel.markAsFavorite(it.id) },
+                        onDelete = { viewModel.deleteWeatherData(it.id) },
+                        onUpdate = {viewModel.updateWeatherData(it.id)}
+                    )
                 }
             }
         }

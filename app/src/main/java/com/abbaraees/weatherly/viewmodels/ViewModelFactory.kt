@@ -14,7 +14,7 @@ class ViewModelFactory(
             modelClass.isAssignableFrom(HomeViewModel::class.java) -> {
                 HomeViewModel(httpClient, repository) as T
             }
-            else -> OthersViewModel(repository) as T
+            else -> OthersViewModel(repository, httpClient) as T
         }
     }
 }
