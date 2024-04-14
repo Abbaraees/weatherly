@@ -90,7 +90,7 @@ fun Home(
                                                 lat = location.latitude,
                                                 lon = location.longitude,
                                                 name = location.name,
-                                                state = location.admin1,
+                                                state = location?.admin1 ?: "",
                                                 country = location.country
                                             )
                                         }

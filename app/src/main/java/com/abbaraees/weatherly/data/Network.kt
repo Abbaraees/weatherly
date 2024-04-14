@@ -61,7 +61,7 @@ data class Location(
     val population: Int,
     val country_id: Int,
     val country: String,
-    val admin1: String,
+    val admin1: String?,
     val admin2: String,
     val admin3: String
 )
